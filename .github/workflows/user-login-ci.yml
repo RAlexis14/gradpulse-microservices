@@ -8,6 +8,15 @@ on:
     paths:
       - "backend/services/users/user-login-service/**"
 
+  push:
+    branches:
+      - qa
+    paths:
+      - "backend/services/users/user-login-service/**"
+
+
+
+
 jobs:
   build-test-and-push:
     runs-on: ubuntu-latest
