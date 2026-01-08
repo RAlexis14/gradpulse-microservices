@@ -1,15 +1,20 @@
-# Community Hours Service
+# Community Hours Service 🌍
 
-Microservice responsible for registering and calculating community service hours.
+Microservice responsible for registering, calculating, and tracking community service hours for students as part of their academic requirements.
 
-## Endpoints
-- POST /community-hours/register
-- GET /community-hours/student/{student_id}
+---
 
-## Architecture
-- Layered Architecture
-- SRP, High Cohesion
-- REST + Events
+## 🎯 Responsibilities
+- Register community service hours per student
+- Calculate total accumulated hours
+- Emit domain events when hours are updated
 
-## Events
-- CommunityHoursUpdated (stub)
+This service follows the **Single Responsibility Principle (SRP)** and maintains **High Cohesion** by focusing exclusively on community hours logic.
+
+---
+
+## 🧱 Architecture
+- **Style:** Layered Architecture
+- **Communication:** REST + Events (stub)
+- **Database:** PostgreSQL
+
