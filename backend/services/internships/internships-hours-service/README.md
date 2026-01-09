@@ -17,3 +17,7 @@ Microservice responsible for registering and calculating pre-professional intern
 ## Testing
 - Unit tests with pytest
 - No real database required
+
+
+📦 Docker Image
+rommela462/internships-hours-service:qa-latest
