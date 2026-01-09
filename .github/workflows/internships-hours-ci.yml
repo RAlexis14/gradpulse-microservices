@@ -5,13 +5,13 @@ on:
     branches:
       - qa
     paths:
-      - backend/services/practices/internships-hours-service/**
+      - backend/services/internships/internships-hours-service/**
 
   pull_request:
     branches:
       - qa
     paths:
-      - backend/services/practices/internships-hours-service/**
+      - backend/services/internships/internships-hours-service/**
 
 jobs:
   build-test-push:
@@ -30,12 +30,12 @@ jobs:
         run: pip install poetry
 
       - name: 📂 Install dependencies
-        working-directory: backend/services/practices/internships-hours-service
+        working-directory: backend/services/internships/internships-hours-service
         run: |
           poetry install --no-root
 
       - name: 🧪 Run unit tests
-        working-directory: backend/services/practices/internships-hours-service
+        working-directory: backend/services/internships/internships-hours-service
         run: |
           poetry run pytest
 
@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: 🐳 Build Docker image
-        working-directory: backend/services/practices/internships-hours-service
+        working-directory: backend/services/internships/internships-hours-service
         run: |
           docker build -t rommela462/internships-hours-service:qa-latest .
 
