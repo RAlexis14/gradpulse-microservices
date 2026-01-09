@@ -19,5 +19,10 @@ Microservice responsible for registering and calculating pre-professional intern
 - No real database required
 
 
+
+🧠 Notes
+
+This service is designed to integrate with academic eligibility and graduation validation processes by providing reliable internship hour tracking.
+
 📦 Docker Image
 rommela462/internships-hours-service:qa-latest
