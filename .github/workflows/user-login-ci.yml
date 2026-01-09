@@ -1,0 +1,53 @@
+name: QA - User Login Service
+
+on:
+  push:
+    branches:
+      - qa
+    paths:
+      - "backend/services/users/user-login-service/**"
+      - ".github/workflows/**"
+
+  pull_request:
+    branches:
+      - qa
+    paths:
+      - "backend/services/users/user-login-service/**"
+
+jobs:
+  build-test-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        working-directory: backend/services/users/user-login-service
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-interaction --no-ansi --no-root
+
+      - name: Run tests
+        working-directory: backend/services/users/user-login-service
+        run: pytest
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        working-directory: backend/services/users/user-login-service
+        run: |
+          docker build -t rommela462/user-login-service:qa-latest .
+          docker push rommela462/user-login-service:qa-latest
