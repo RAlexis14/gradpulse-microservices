@@ -5,10 +5,11 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 
 RUN pip install --no-cache-dir poetry \
-    && poetry install --no-root --no-interaction --no-ansi
+ && poetry config virtualenvs.create false \
+ && poetry install --no-root --no-interaction --no-ansi
 
 COPY . .
 
 ENV PYTHONPATH=/app
 
-CMD ["python", "app/app.py"]
+CMD ["python", "-m", "app.app"]
