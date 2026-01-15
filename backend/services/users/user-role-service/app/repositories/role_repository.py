@@ -16,7 +16,7 @@ class RoleRepository:
 
     def create_role(self, role_name: str) -> bool:
         try:
-            query = "INSERT INTO roles (name) VALUES (%s)"
+            query = "INSERT INTO roles (name) VALUES (%s) ON CONFLICT DO NOTHING"
             with self._get_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(query, (role_name,))
@@ -27,8 +27,10 @@ class RoleRepository:
     def assign_role(self, user_id: int, role_name: str) -> bool:
         try:
             query = """
-                INSERT INTO user_roles (user_id, role_name)
-                VALUES (%s, %s)
+                INSERT INTO user_roles (user_id, role_id)
+                SELECT %s, r.id
+                FROM roles r
+                WHERE r.name = %s
             """
             with self._get_connection() as conn:
                 with conn.cursor() as cursor:
@@ -40,14 +42,15 @@ class RoleRepository:
     def get_roles_by_user(self, user_id: int) -> list:
         try:
             query = """
-                SELECT role_name
-                FROM user_roles
-                WHERE user_id = %s
+                SELECT r.name
+                FROM user_roles ur
+                JOIN roles r ON ur.role_id = r.id
+                WHERE ur.user_id = %s
             """
             with self._get_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(query, (user_id,))
                     rows = cursor.fetchall()
-                    return [row["role_name"] for row in rows]
+                    return [row["name"] for row in rows]
         except psycopg2.Error:
             return []
