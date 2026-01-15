@@ -6,9 +6,15 @@ class UserRepository:
     def get_user_by_id(self, user_id: int):
         try:
             query = """
-                SELECT id, email, is_active, role
-                FROM users
-                WHERE id = %s
+                SELECT 
+                    u.id,
+                    u.email,
+                    u.is_active,
+                    r.name AS role
+                FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                LEFT JOIN roles r ON ur.role_id = r.id
+                WHERE u.id = %s
             """
 
             connection = get_db_connection()
@@ -18,5 +24,4 @@ class UserRepository:
                     return cursor.fetchone()
 
         except psycopg2.OperationalError:
-            # Database not available (dev mode)
             return None
