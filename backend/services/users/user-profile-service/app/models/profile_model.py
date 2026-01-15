@@ -1,6 +1,5 @@
 class UserProfile:
-    def __init__(self, user_id: int, name: str, email: str, status: str):
+    def __init__(self, user_id: int, email: str, is_active: bool):
         self.user_id = user_id
-        self.name = name
         self.email = email
-        self.status = status
+        self.is_active = is_active

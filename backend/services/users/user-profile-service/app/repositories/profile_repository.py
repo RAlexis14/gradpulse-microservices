@@ -4,6 +4,7 @@ from app.core.config import settings
 
 
 class ProfileRepository:
+
     def _get_connection(self):
         return psycopg2.connect(
             host=settings.DB_HOST,
@@ -17,7 +18,10 @@ class ProfileRepository:
     def get_profile_by_id(self, user_id: int):
         try:
             query = """
-                SELECT id, name, email, status
+                SELECT 
+                    id,
+                    email,
+                    is_active
                 FROM users
                 WHERE id = %s
             """
@@ -25,5 +29,6 @@ class ProfileRepository:
                 with conn.cursor() as cursor:
                     cursor.execute(query, (user_id,))
                     return cursor.fetchone()
-        except psycopg2.Error:
+        except Exception as e:
+            print(f"DB error: {e}")
             return None

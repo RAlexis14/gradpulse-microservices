@@ -5,6 +5,8 @@ from app.controllers.profile_controller import bp
 def create_app() -> Flask:
     app = Flask(__name__)
     app.register_blueprint(bp)
+    print(app.url_map)
+
     return app
 
 

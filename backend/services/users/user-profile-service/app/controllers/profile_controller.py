@@ -6,7 +6,7 @@ bp = Blueprint("profiles", __name__)
 
 
 @bp.route("/profiles/<int:user_id>", methods=["GET"])
-def get_profile(user_id: int):
+def get_profile(user_id):
     service = ProfileService(ProfileRepository())
     profile = service.get_user_profile(user_id)
 
