@@ -2,13 +2,16 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN pip install poetry
-
 COPY pyproject.toml poetry.lock* ./
-RUN poetry install --no-root
+
+RUN pip install --no-cache-dir poetry \
+ && poetry config virtualenvs.create false \
+ && poetry install --no-root --no-interaction --no-ansi
 
 COPY app ./app
 
+ENV PYTHONPATH=/app
+
 EXPOSE 5000
 
-CMD ["poetry", "run", "python", "-m", "app.app"]
+CMD ["python", "-m", "app.app"]
