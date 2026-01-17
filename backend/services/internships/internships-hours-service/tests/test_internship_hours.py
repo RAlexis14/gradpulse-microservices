@@ -1,3 +1,4 @@
+import os
 from app.services.internship_hours_service import InternshipHoursService
 
 
@@ -24,8 +25,18 @@ def test_register_hours():
     assert service.register_hours(1, 8) is True
 
 
-def test_get_hours():
+def test_get_hours_progress():
+    # Ensure rule stays stable for CI
+    os.environ["INTERNSHIPS_REQUIRED_HOURS"] = "240"
+
     repo = FakeRepository()
     repo.save_hours(1, 16)
+
     service = InternshipHoursService(repo, FakePublisher())
-    assert service.get_student_hours(1) == 16
+    result = service.get_student_progress(1)
+
+    assert result["student_id"] == 1
+    assert result["total_hours"] == 16
+    assert result["required_hours"] == 240
+    assert result["missing_hours"] == 224
+    assert result["completed"] is False
