@@ -5,10 +5,9 @@ from app.infrastructure.event_publisher import EventPublisher
 
 bp = Blueprint("internship_hours", __name__)
 
-
-@bp.route("/internships-hours/register", methods=["POST"])
+@bp.route("/internships/hours/register", methods=["POST"])
 def register_hours():
-    data = request.get_json()
+    data = request.get_json() or {}
     student_id = data.get("student_id")
     hours = data.get("hours")
 
@@ -24,16 +23,13 @@ def register_hours():
     return jsonify({"message": "Internship hours registered"}), 201
 
 
-@bp.route("/internships-hours/student/<int:student_id>", methods=["GET"])
+
+@bp.route("/internships/hours/student/<int:student_id>", methods=["GET"])
 def get_student_hours(student_id: int):
     service = InternshipHoursService(
         InternshipHoursRepository(),
         EventPublisher()
     )
 
-    total = service.get_student_hours(student_id)
-
-    return jsonify({
-        "student_id": student_id,
-        "total_hours": total
-    }), 200
+    result = service.get_student_progress(student_id)
+    return jsonify(result), 200
