@@ -19,7 +19,23 @@ class CommunityHoursService:
 
         return True
 
-    def get_student_hours(self, student_id: int) -> int:
+    def get_student_progress(self, student_id: int, required_hours: int = 160) -> dict:
         if student_id <= 0:
-            return 0
-        return self.repository.get_total_hours(student_id)
+            return {
+                "student_id": student_id,
+                "required_hours": required_hours,
+                "total_hours": 0,
+                "missing_hours": required_hours,
+                "completed": False,
+            }
+
+        total = self.repository.get_total_hours(student_id)
+        missing = max(0, required_hours - total)
+
+        return {
+            "student_id": student_id,
+            "required_hours": required_hours,
+            "total_hours": total,
+            "missing_hours": missing,
+            "completed": (missing == 0),
+        }

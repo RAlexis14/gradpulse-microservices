@@ -6,11 +6,11 @@ from app.infrastructure.event_publisher import EventPublisher
 bp = Blueprint("community_hours", __name__)
 
 
-@bp.route("/community-hours/register", methods=["POST"])
+@bp.route("/community/hours/register", methods=["POST"])
 def register_hours():
-    data = request.get_json()
-    student_id = data.get("student_id")
-    hours = data.get("hours")
+    data = request.get_json() or {}
+    student_id = int(data.get("student_id", 0))
+    hours = int(data.get("hours", 0))
 
     service = CommunityHoursService(
         CommunityHoursRepository(),
@@ -24,16 +24,12 @@ def register_hours():
     return jsonify({"message": "Community hours registered"}), 201
 
 
-@bp.route("/community-hours/student/<int:student_id>", methods=["GET"])
+@bp.route("/community/hours/<int:student_id>", methods=["GET"])
 def get_student_hours(student_id: int):
     service = CommunityHoursService(
         CommunityHoursRepository(),
         EventPublisher()
     )
 
-    total = service.get_student_hours(student_id)
-
-    return jsonify({
-        "student_id": student_id,
-        "total_hours": total
-    }), 200
+    progress = service.get_student_progress(student_id, required_hours=160)
+    return jsonify(progress), 200

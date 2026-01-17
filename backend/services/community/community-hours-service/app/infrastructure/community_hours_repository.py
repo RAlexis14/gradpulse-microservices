@@ -6,7 +6,7 @@ class CommunityHoursRepository:
     def save_hours(self, student_id: int, hours: int) -> bool:
         try:
             query = """
-                INSERT INTO community_hours (student_id, hours)
+                INSERT INTO community_hours_log (student_id, hours)
                 VALUES (%s, %s)
             """
             with get_db_connection() as conn:
@@ -20,13 +20,13 @@ class CommunityHoursRepository:
         try:
             query = """
                 SELECT COALESCE(SUM(hours), 0) AS total
-                FROM community_hours
+                FROM community_hours_log
                 WHERE student_id = %s
             """
             with get_db_connection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(query, (student_id,))
                     row = cursor.fetchone()
-                    return row["total"] if row else 0
+                    return int(row["total"]) if row else 0
         except psycopg2.Error:
             return 0
