@@ -1,3 +1,4 @@
+import os
 from app.services.community_hours_service import CommunityHoursService
 
 
@@ -24,8 +25,19 @@ def test_register_hours():
     assert service.register_hours(1, 10) is True
 
 
-def test_get_hours():
+def test_get_hours_progress():
+    # Use the same rule you set in Vinculacion (example: 160)
+    # IMPORTANT: this env name must match what your service reads.
+    os.environ["COMMUNITY_REQUIRED_HOURS"] = "160"
+
     repo = FakeRepository()
     repo.save_hours(1, 20)
+
     service = CommunityHoursService(repo, FakePublisher())
-    assert service.get_student_hours(1) == 20
+    result = service.get_student_progress(1)
+
+    assert result["student_id"] == 1
+    assert result["total_hours"] == 20
+    assert result["required_hours"] == 160
+    assert result["missing_hours"] == 140
+    assert result["completed"] is False
