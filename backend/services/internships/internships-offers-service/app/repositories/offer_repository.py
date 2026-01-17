@@ -5,7 +5,7 @@ from app.models.offer_model import InternshipOffer
 class OfferRepository:
     def find_all_active(self):
         collection = get_collection()
-        if not collection:
+        if collection is None:
             return []
 
         offers = []
@@ -24,7 +24,7 @@ class OfferRepository:
 
     def find_by_id(self, offer_id: str):
         collection = get_collection()
-        if not collection:
+        if collection is None:
             return None
 
         doc = collection.find_one({"_id": offer_id})

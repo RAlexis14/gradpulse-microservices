@@ -4,15 +4,13 @@ from app.repositories.offer_repository import OfferRepository
 
 bp = Blueprint("internship_offers", __name__)
 
-
-@bp.route("/internships-offers", methods=["GET"])
+@bp.route("/internships/offers", methods=["GET"])
 def list_offers():
     service = OfferService(OfferRepository())
     offers = service.list_offers()
     return jsonify([o.to_dict() for o in offers]), 200
 
-
-@bp.route("/internships-offers/<string:offer_id>", methods=["GET"])
+@bp.route("/internships/offers/<string:offer_id>", methods=["GET"])
 def get_offer(offer_id: str):
     service = OfferService(OfferRepository())
     offer = service.get_offer(offer_id)
