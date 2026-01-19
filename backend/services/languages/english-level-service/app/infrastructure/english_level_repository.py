@@ -2,9 +2,9 @@ from app.infrastructure.db import get_db_connection
 
 
 class EnglishLevelRepository:
-    def get_level(self, student_id: int) -> str | None:
+    def get_level(self, student_id: int):
         conn = get_db_connection()
-        if not conn:
+        if conn is None:
             return None
 
         query = "SELECT level FROM english_levels WHERE student_id = %s"
@@ -21,14 +21,14 @@ class EnglishLevelRepository:
 
     def set_level(self, student_id: int, level: str) -> bool:
         conn = get_db_connection()
-        if not conn:
+        if conn is None:
             return False
 
         query = """
             INSERT INTO english_levels (student_id, level)
             VALUES (%s, %s)
             ON CONFLICT (student_id)
-            DO UPDATE SET level = EXCLUDED.level
+            DO UPDATE SET level = EXCLUDED.level, updated_at = CURRENT_TIMESTAMP
         """
         try:
             with conn:

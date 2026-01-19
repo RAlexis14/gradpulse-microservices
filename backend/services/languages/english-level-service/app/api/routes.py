@@ -4,7 +4,6 @@ from app.infrastructure.english_level_repository import EnglishLevelRepository
 
 bp = Blueprint("english_level", __name__)
 
-
 @bp.route("/english-level/student/<int:student_id>", methods=["GET"])
 def get_level(student_id: int):
     service = EnglishLevelService(EnglishLevelRepository())
@@ -18,10 +17,19 @@ def get_level(student_id: int):
         "level": level
     }), 200
 
+@bp.route("/english-level/student/<int:student_id>/status", methods=["GET"])
+def get_level_status(student_id: int):
+    service = EnglishLevelService(EnglishLevelRepository())
+    status = service.get_student_level_status(student_id)
+
+    if not status:
+        return jsonify({"error": "English level not found"}), 404
+
+    return jsonify(status), 200
 
 @bp.route("/english-level/update", methods=["POST"])
 def update_level():
-    data = request.get_json()
+    data = request.get_json() or {}
     student_id = data.get("student_id")
     level = data.get("level")
 
