@@ -8,6 +8,8 @@ authors = ["Rommel Pachacama"]
 python = "^3.11"
 flask = "^3.0.0"
 pymongo = "^4.6.0"
+gunicorn = "^21.2.0"
+
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
