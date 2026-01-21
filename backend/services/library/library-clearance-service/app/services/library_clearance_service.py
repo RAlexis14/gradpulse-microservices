@@ -8,6 +8,13 @@ class LibraryClearanceService:
         self.event_publisher = event_publisher
 
     def process_clearance(self, student_id: int) -> dict:
+        if student_id <= 0:
+            return {
+                "student_id": student_id,
+                "cleared": False,
+                "message": "Invalid student_id",
+            }
+
         has_blocks = self.repository.has_library_blocks(student_id)
         clearance = LibraryClearance(student_id, has_blocks)
 
@@ -15,13 +22,11 @@ class LibraryClearanceService:
             return {
                 "student_id": student_id,
                 "cleared": False,
-                "message": "Student has library blocks"
+                "message": "Student has library blocks",
             }
 
         certificate_content = f"Library clearance certificate for student {student_id}"
-        storage_path = self.storage_client.upload_certificate(
-            student_id, certificate_content
-        )
+        storage_path = self.storage_client.upload_certificate(student_id, certificate_content)
 
         self.repository.save_clearance_metadata(student_id, storage_path)
         self.event_publisher.publish_clearance_event(student_id, True)
@@ -29,5 +34,5 @@ class LibraryClearanceService:
         return {
             "student_id": student_id,
             "cleared": True,
-            "certificate_path": storage_path
+            "certificate_path": storage_path,
         }

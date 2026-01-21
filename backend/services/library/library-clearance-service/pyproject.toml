@@ -7,6 +7,7 @@ authors = ["Rommel Pachacama"]
 [tool.poetry.dependencies]
 python = "^3.11"
 flask = "^3.0.0"
+gunicorn = "^21.2.0"
 psycopg2-binary = "^2.9.9"
 
 [tool.poetry.group.dev.dependencies]
