@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: gradpulse-postgres
+    environment:
+      POSTGRES_USER: gradpulse
+      POSTGRES_PASSWORD: gradpulse123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+
+  mongo:
+    image: mongo:6
+    container_name: gradpulse-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d
+
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: gradpulse-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  mongodata:

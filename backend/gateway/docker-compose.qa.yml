@@ -1,0 +1,143 @@
+version: "3.9"
+
+networks:
+  gradpulse-net:
+    external: true
+    name: database-stack_default
+
+services:
+
+  # ========================
+  # API GATEWAY
+  # ========================
+  api-gateway:
+    image: gradpulse-api-gateway:qa
+    container_name: gradpulse-api-gateway
+    ports:
+      - "8080:80"
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  # ========================
+  # USERS (5)
+  # ========================
+  user-login-service:
+    image: rommela462/user-login-service:qa-latest
+    container_name: user-login-service
+    env_file:
+      - ../services/users/user-login-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  user-logout-service:
+    image: rommela462/user-logout-service:qa-latest
+    container_name: user-logout-service
+    env_file:
+      - ../services/users/user-logout-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  user-profile-service:
+    image: rommela462/user-profile-service:qa-latest
+    container_name: user-profile-service
+    env_file:
+      - ../services/users/user-profile-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  user-verification-service:
+    image: rommela462/user-verification-service:qa-latest
+    container_name: user-verification-service
+    env_file:
+      - ../services/users/user-verification-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  user-role-service:
+    image: rommela462/user-role-service:qa-latest
+    container_name: user-role-service
+    env_file:
+      - ../services/users/user-role-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  # ========================
+  # ACADEMIC (1)
+  # ========================
+  student-profile-service:
+    image: rommela462/student-profile-service:qa-latest
+    container_name: student-profile-service
+    env_file:
+      - ../services/academic/student-profile-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  # ========================
+  # COMMUNITY (2)
+  # ========================
+  community-programs-service:
+    image: rommela462/community-programs-service:qa-latest
+    container_name: community-programs-service
+    env_file:
+      - ../services/community/community-programs-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  community-hours-service:
+    image: rommela462/community-hours-service:qa-latest
+    container_name: community-hours-service
+    env_file:
+      - ../services/community/community-hours-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  # ========================
+  # INTERNSHIPS (2)
+  # ========================
+  internships-offers-service:
+    image: rommela462/internships-offers-service:qa-latest
+    container_name: internships-offers-service
+    env_file:
+      - ../services/internships/internships-offers-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  internships-hours-service:
+    image: rommela462/internships-hours-service:qa-latest
+    container_name: internships-hours-service
+    env_file:
+      - ../services/internships/internships-hours-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  # ========================
+  # LANGUAGES (2)
+  # ========================
+  english-courses-service:
+    image: rommela462/english-courses-service:qa-latest
+    container_name: english-courses-service
+    env_file:
+      - ../services/languages/english-courses-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
+
+  english-level-service:
+    image: rommela462/english-level-service:qa-latest
+    container_name: english-level-service
+    env_file:
+      - ../services/languages/english-level-service/.env
+    networks:
+      - gradpulse-net
+    restart: unless-stopped
