@@ -1,0 +1,55 @@
+name: notification-ci 🔔
+
+on:
+  push:
+    branches:
+      - qa
+    paths:
+      - backend/services/notifications/notification-service/**
+
+  pull_request:
+    branches:
+      - qa
+    paths:
+      - backend/services/notifications/notification-service/**
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install Poetry
+        run: pip install poetry
+
+      - name: 📂 Install dependencies
+        working-directory: backend/services/notifications/notification-service
+        run: |
+          poetry install --no-root
+
+      - name: 🧪 Run unit tests
+        working-directory: backend/services/notifications/notification-service
+        run: |
+          poetry run pytest
+
+      - name: 🔐 Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 🐳 Build Docker image
+        working-directory: backend/services/notifications/notification-service
+        run: |
+          docker build -t rommela462/notification-service:qa-latest .
+
+      - name: 🚀 Push Docker image
+        run: |
+          docker push rommela462/notification-service:qa-latest

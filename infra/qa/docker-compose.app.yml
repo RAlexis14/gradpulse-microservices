@@ -1,0 +1,141 @@
+services:
+  gradpulse-api-gateway:
+    image: rommela462/gradpulse-api-gateway:qa-latest
+    container_name: gradpulse-api-gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    env_file:
+      - ./infra/qa/env/gateway.env
+    depends_on:
+      - user-login-service
+      - user-logout-service
+      - user-role-service
+      - user-profile-service
+      - user-verification-service
+      - student-profile-service
+      - community-programs-service
+      - community-hours-service
+      - internships-offers-service
+      - internships-hours-service
+      - english-courses-service
+      - english-level-service
+    networks:
+      - gradpulse_net
+
+  # ---------------- USERS ----------------
+  user-login-service:
+    image: rommela462/user-login-service:qa-latest
+    container_name: user-login-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/user-login-service.env
+    networks:
+      - gradpulse_net
+
+  user-logout-service:
+    image: rommela462/user-logout-service:qa-latest
+    container_name: user-logout-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/user-logout-service.env
+    networks:
+      - gradpulse_net
+
+  user-role-service:
+    image: rommela462/user-role-service:qa-latest
+    container_name: user-role-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/user-role-service.env
+    networks:
+      - gradpulse_net
+
+  user-profile-service:
+    image: rommela462/user-profile-service:qa-latest
+    container_name: user-profile-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/user-profile-service.env
+    networks:
+      - gradpulse_net
+
+  user-verification-service:
+    image: rommela462/user-verification-service:qa-latest
+    container_name: user-verification-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/user-verification-service.env
+    networks:
+      - gradpulse_net
+
+  # ---------------- ACADEMIC ----------------
+  student-profile-service:
+    image: rommela462/student-profile-service:qa-latest
+    container_name: student-profile-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/student-profile-service.env
+    networks:
+      - gradpulse_net
+
+  # ---------------- COMMUNITY ----------------
+  community-programs-service:
+    image: rommela462/community-programs-service:qa-latest
+    container_name: community-programs-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/community-programs-service.env
+    networks:
+      - gradpulse_net
+
+  community-hours-service:
+    image: rommela462/community-hours-service:qa-latest
+    container_name: community-hours-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/community-hours-service.env
+    networks:
+      - gradpulse_net
+
+  # ---------------- INTERNSHIPS ----------------
+  internships-offers-service:
+    image: rommela462/internships-offers-service:qa-latest
+    container_name: internships-offers-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/internships-offers-service.env
+    networks:
+      - gradpulse_net
+
+  internships-hours-service:
+    image: rommela462/internships-hours-service:qa-latest
+    container_name: internships-hours-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/internships-hours-service.env
+    networks:
+      - gradpulse_net
+
+  # ---------------- LANGUAGES ----------------
+  english-courses-service:
+    image: rommela462/english-courses-service:qa-latest
+    container_name: english-courses-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/english-courses-service.env
+    networks:
+      - gradpulse_net
+
+  english-level-service:
+    image: rommela462/english-level-service:qa-latest
+    container_name: english-level-service
+    restart: unless-stopped
+    env_file:
+      - ./infra/qa/env/english-level-service.env
+    networks:
+      - gradpulse_net
+
+networks:
+  gradpulse_net:
+    driver: bridge
