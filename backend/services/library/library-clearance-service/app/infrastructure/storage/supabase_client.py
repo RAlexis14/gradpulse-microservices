@@ -1,7 +1,5 @@
 class SupabaseStorageClient:
     def upload_certificate(self, student_id: int, content: str) -> str:
-        """
-        Simulates uploading a clearance certificate to Supabase Storage.
-        Returns a fake storage path.
-        """
+        # Stub: replace with real Supabase Storage upload later
+        # For now returns a "fake" path that we store as metadata.
         return f"supabase://library-clearance/student-{student_id}.pdf"
