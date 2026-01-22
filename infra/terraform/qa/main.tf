@@ -183,12 +183,19 @@ resource "aws_instance" "app" {
   subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   key_name               = var.key_name
-  user_data              = file("${path.module}/user_data_app.sh")
+
+  # ✅ INYECTA la IP privada real de la instancia DB dentro del user_data_app.sh
+  user_data = replace(
+    file("${path.module}/user_data_app.sh"),
+    "${DB_PRIVATE_IP}",
+    aws_instance.db.private_ip
+  )
 
   tags = {
     Name = "${var.project_name}-${var.environment}-app"
   }
 }
+
 
 resource "aws_instance" "db" {
   ami                    = var.ami_id
@@ -243,6 +250,8 @@ resource "aws_lb_target_group_attachment" "app_attach" {
   target_id        = aws_instance.app.id
   port             = 80
 }
+
+
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
