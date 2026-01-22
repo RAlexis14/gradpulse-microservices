@@ -18,17 +18,19 @@ variable "environment" {
   default = "qa"
 }
 
+# Tu IP pública /32 (ej: 38.51.35.8/32)
 variable "ssh_allowed_cidr" {
   type = string
 }
 
-variable "ami_id" {
-  type = string
+variable "key_name" {
+  type    = string
+  default = "gradpulse-qa-key"
 }
 
-variable "key_name" {
-  description = "Existing EC2 key pair name in AWS Academy (often vockey)"
-  type        = string
+# AMI ID fijo (evita DescribeImages si el lab molesta)
+variable "ami_id" {
+  type = string
 }
 
 variable "instance_type_bastion" {

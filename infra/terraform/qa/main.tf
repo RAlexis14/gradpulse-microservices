@@ -1,11 +1,11 @@
+
 # -------------------------
-# Use existing default VPC (AWS Academy friendly)
+# Default VPC (AWS Academy friendly)
 # -------------------------
 data "aws_vpc" "default" {
   default = true
 }
 
-# Get all subnets in default VPC (usually public)
 data "aws_subnets" "default_vpc_subnets" {
   filter {
     name   = "vpc-id"
@@ -14,7 +14,7 @@ data "aws_subnets" "default_vpc_subnets" {
 }
 
 # -------------------------
-# Security Groups (we CAN usually create these)
+# Security Groups
 # -------------------------
 resource "aws_security_group" "alb_sg" {
   name        = "${var.project_name}-${var.environment}-alb-sg"
@@ -161,9 +161,22 @@ resource "aws_security_group" "db_sg" {
 }
 
 # -------------------------
-# EC2 Instances (in existing subnets)
-# NOTE: We do NOT create KeyPairs in Academy. Use an existing key_name (e.g., vockey)
+# Instances
+# (Important: DB first so we can inject its private ip into APP user_data)
 # -------------------------
+resource "aws_instance" "db" {
+  ami                    = var.ami_id
+  instance_type          = var.instance_type_db
+  subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  key_name               = var.key_name
+  user_data              = file("${path.module}/user_data_db.sh")
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-db"
+  }
+}
+
 resource "aws_instance" "bastion" {
   ami                    = var.ami_id
   instance_type          = var.instance_type_bastion
@@ -184,10 +197,10 @@ resource "aws_instance" "app" {
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   key_name               = var.key_name
 
-  # ✅ INYECTA la IP privada real de la instancia DB dentro del user_data_app.sh
+  # Inyecta IP real de la DB dentro del user_data_app.sh
   user_data = replace(
     file("${path.module}/user_data_app.sh"),
-    "${DB_PRIVATE_IP}",
+    "__DB_PRIVATE_IP__",
     aws_instance.db.private_ip
   )
 
@@ -196,22 +209,24 @@ resource "aws_instance" "app" {
   }
 }
 
-
-resource "aws_instance" "db" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type_db
-  subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
-  vpc_security_group_ids = [aws_security_group.db_sg.id]
-  key_name               = var.key_name
-  user_data              = file("${path.module}/user_data_db.sh")
+# -------------------------
+# Bastion Elastic IP (IP fija)
+# -------------------------
+resource "aws_eip" "bastion_eip" {
+  domain = "vpc"
 
   tags = {
-    Name = "${var.project_name}-${var.environment}-db"
+    Name = "${var.project_name}-${var.environment}-bastion-eip"
   }
 }
 
+resource "aws_eip_association" "bastion_eip_assoc" {
+  instance_id   = aws_instance.bastion.id
+  allocation_id = aws_eip.bastion_eip.id
+}
+
 # -------------------------
-# ALB (public) -> forwards to APP:80
+# ALB -> forwards to APP:80
 # -------------------------
 resource "aws_lb" "alb" {
   name               = "${var.project_name}-${var.environment}-alb"
@@ -250,8 +265,6 @@ resource "aws_lb_target_group_attachment" "app_attach" {
   target_id        = aws_instance.app.id
   port             = 80
 }
-
-
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
