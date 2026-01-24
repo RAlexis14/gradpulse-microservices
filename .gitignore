@@ -4,11 +4,15 @@
 .env
 *.env
 !.env.example
+
+# Custom env folders (keep templates)
 infra/qa/env/*.env
 !infra/qa/env/*.env.example
 
-# (optional) local QA folder (if you keep local-only files there)
-# infra/qa/
+# Optional: ignore any .env in subfolders
+**/.env
+**/*.env
+!**/*.env.example
 
 # =========================
 # Terraform (NEVER COMMIT)
@@ -28,19 +32,55 @@ infra/qa/env/*.env
 **/__pycache__/
 **/*.pyc
 **/*.pyo
+**/.pytest_cache/
+**/.mypy_cache/
+**/.coverage
+**/htmlcov/
+**/.ruff_cache/
+**/.venv/
+**/venv/
 
 # =========================
-# Node / Frontend
+# Node / Frontend / JS
 # =========================
 **/node_modules/
 **/dist/
 **/.vite/
 **/.next/
 **/build/
+**/.turbo/
+**/.parcel-cache/
+**/.cache/
 
-# This folder is currently untracked in your repo.
-# Keep ignored unless you explicitly want to commit it.
-frontend/gradpulse-frontend/
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# Electron outputs (Desktop)
+# =========================
+**/renderer-dist/
+**/out/
+**/release/
+**/*.dmg
+**/*.exe
+**/*.msi
+**/*.AppImage
+**/*.snap
+**/*.deb
+**/*.rpm
+
+# =========================
+# Docker / Compose local
+# =========================
+**/*.pid
+**/docker-data/
+**/data/
+**/tmp/
 
 # =========================
 # OS / IDE
@@ -49,3 +89,26 @@ frontend/gradpulse-frontend/
 Thumbs.db
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# =========================
+# Security - keys & certs
+# =========================
+**/*.pem
+**/*.key
+**/*.crt
+**/*.p12
+**/*.pfx
+**/id_rsa
+**/id_ed25519
+**/*.ppk
+
+# =========================
+# IMPORTANT: DO NOT IGNORE SOURCE CODE
+# =========================
+# We WANT to commit the frontend source:
+# frontend/web/** and frontend/desktop/** (source only)
+# So DO NOT add rules like:
+# frontend/
+# frontend/gradpulse-frontend/
