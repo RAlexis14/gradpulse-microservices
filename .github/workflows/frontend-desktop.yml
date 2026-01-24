@@ -1,0 +1,38 @@
+name: QA - Frontend Desktop (Electron)
+
+on:
+  push:
+    branches: [ "qa" ]
+    paths:
+      - "frontend/gradpulse-frontend/desktop/**"
+      - ".github/workflows/qa-frontend-desktop.yml"
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        working-directory: frontend/gradpulse-frontend/desktop
+        run: npm ci
+
+      - name: Build desktop
+        working-directory: frontend/gradpulse-frontend/desktop
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradpulse-desktop-windows
+          path: |
+            frontend/gradpulse-frontend/desktop/dist/**
+            frontend/gradpulse-frontend/desktop/out/**
+            frontend/gradpulse-frontend/desktop/release/**
