@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "aws_profile" {
   type    = string
-  default = "gradpulse-qa"
+  default = "gradpulse-pro"
 }
 
 variable "project_name" {
@@ -15,22 +15,18 @@ variable "project_name" {
 
 variable "environment" {
   type    = string
-  default = "qa"
+  default = "pro"
 }
 
-# Tu IP pública /32 (ej: 38.51.35.8/32)
+# Your public IP /32 (e.g., 38.51.35.8/32)
 variable "ssh_allowed_cidr" {
   type = string
 }
 
 variable "key_name" {
-  type    = string
-  default = "gradpulse-qa-key"
-}
-
-# AMI ID fijo (evita DescribeImages si el lab molesta)
-variable "ami_id" {
-  type = string
+  type        = string
+  default     = "gradpulse-qa-key"
+  description = "EC2 key pair name"
 }
 
 variable "instance_type_bastion" {
@@ -46,4 +42,9 @@ variable "instance_type_app" {
 variable "instance_type_db" {
   type    = string
   default = "t3.small"
+}
+
+variable "public_key_path" {
+  type        = string
+  description = "Path to the SSH public key (.pub) file"
 }

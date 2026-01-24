@@ -1,3 +1,23 @@
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+
+
+
+
+
 
 # -------------------------
 # Default VPC (AWS Academy friendly)
@@ -160,16 +180,33 @@ resource "aws_security_group" "db_sg" {
   }
 }
 
+
+
+resource "aws_key_pair" "gradpulse_key" {
+  key_name   = var.key_name
+  public_key = file(var.public_key_path)
+
+  tags = {
+    Name = var.key_name
+  }
+}
+
+
+
+
+
+
+
 # -------------------------
 # Instances
 # (Important: DB first so we can inject its private ip into APP user_data)
 # -------------------------
 resource "aws_instance" "db" {
-  ami                    = var.ami_id
+  ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = var.instance_type_db
   subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
   vpc_security_group_ids = [aws_security_group.db_sg.id]
-  key_name               = var.key_name
+  key_name               = aws_key_pair.gradpulse_key.key_name
   user_data              = file("${path.module}/user_data_db.sh")
 
   tags = {
@@ -178,11 +215,11 @@ resource "aws_instance" "db" {
 }
 
 resource "aws_instance" "bastion" {
-  ami                    = var.ami_id
+  ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = var.instance_type_bastion
   subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
-  key_name               = var.key_name
+  key_name               = aws_key_pair.gradpulse_key.key_name
   user_data              = file("${path.module}/user_data_bastion.sh")
 
   tags = {
@@ -191,11 +228,11 @@ resource "aws_instance" "bastion" {
 }
 
 resource "aws_instance" "app" {
-  ami                    = var.ami_id
+  ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = var.instance_type_app
   subnet_id              = data.aws_subnets.default_vpc_subnets.ids[0]
   vpc_security_group_ids = [aws_security_group.app_sg.id]
-  key_name               = var.key_name
+  key_name               = aws_key_pair.gradpulse_key.key_name
 
   # Inyecta IP real de la DB dentro del user_data_app.sh
   user_data = replace(
@@ -276,3 +313,4 @@ resource "aws_lb_listener" "http" {
     target_group_arn = aws_lb_target_group.tg.arn
   }
 }
+
