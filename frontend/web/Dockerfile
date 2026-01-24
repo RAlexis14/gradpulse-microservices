@@ -2,7 +2,8 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install deps first (better caching)
+# Install deps first
+
 COPY package*.json ./
 RUN npm ci
 
