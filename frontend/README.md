@@ -1,5 +1,8 @@
 # GradPulse Frontend (Web + PWA + Desktop)
 
+
+This module contains the GradPulse multi-platform frontend: a complete Web application built with React + Vite + TypeScript + TailwindCSS + PWA, and a Desktop application built with Electron that wraps the same web UI for a native-like desktop experience. All communication with the backend is performed exclusively through the NGINX API Gateway (no direct calls to microservices), using JWT Bearer Token authentication, role-based access (STUDENT / ADMIN), loading states, and user-friendly error notifications. The UI is designed as a modern, responsive dashboard and is ready for QA/PROD deployment via Docker and CI/CD.
+
 A multi-platform frontend for **GradPulse** that communicates **ONLY** with the **NGINX API Gateway** (no direct microservice calls).
 
 ## Requirements
@@ -84,6 +87,8 @@ curl http://localhost:8080/api/v1/community/programs   -H "Authorization: Bearer
 - `/admin` (ADMIN only)
 
 ### Notes
+
+
 
 - The login response returns only `access_token` + `token_type`. Since `student_id` is not returned, the UI asks the user to pick a Student ID (mock 1..21) right after login.
 - **Students cannot register hours or update levels**. Those actions are available only in `/admin`.
