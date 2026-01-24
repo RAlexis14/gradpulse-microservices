@@ -25,6 +25,11 @@ infra/qa/env/*.env
 **/*.tfvars.json
 **/crash.log
 **/crash.*.log
+# Terraform plans
+**/tfplan
+
+# TypeScript build info
+**/*.tsbuildinfo
 
 # =========================
 # Python
